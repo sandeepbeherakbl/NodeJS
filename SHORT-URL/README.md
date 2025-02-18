@@ -8,7 +8,7 @@ Also, Keep track of total visits/clicks on the URL.
 
 ## Routes
 
-```
+```sh
 - [POST/URL] - Generate a new short URL and returns the shortened URL in the format.
 - [GET/:id] - Redirects the user to the original URL
 - [GET/URL/analytics/:id] - returns the clicks for the provided short id.
