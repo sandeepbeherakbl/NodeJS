@@ -1,7 +1,5 @@
 # NodeJS
 
-# Node.js Project Setup Guide
-
 ## Table of Contents
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
