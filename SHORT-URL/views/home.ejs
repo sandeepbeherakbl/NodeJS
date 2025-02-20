@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #4f46e5;
+        --secondary-color: #4338ca;
+        --accent-color: #818cf8;
+        --background-color: #f8fafc;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--background-color);
+        background-image: radial-gradient(
+            at 40% 20%,
+            rgba(79, 70, 229, 0.1) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 80% 0%,
+            rgba(129, 140, 248, 0.1) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 0% 50%,
+            rgba(99, 102, 241, 0.1) 0px,
+            transparent 50%
+          );
+        min-height: 100vh;
+      }
+
+      .navbar {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        color: white;
+        font-size: 1.75rem;
+        font-weight: bold;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-brand i {
+        font-size: 1.5rem;
+      }
+
+      .nav-btn {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-btn:hover {
+        background-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .form-container {
+        max-width: 800px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        margin: 2rem auto;
+        transition: transform 0.3s ease;
+      }
+
+      .form-container:hover {
+        transform: translateY(-2px);
+      }
+
+      .input-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8fafc;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        margin-bottom: 2rem;
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #64748b, #475569);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .generated-url {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .url-text {
+        font-family: "Courier New", monospace;
+        color: var(--primary-color);
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .table-container {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-top: 2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .table-container:hover {
+        transform: translateY(-2px);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #1e293b;
+        border-bottom: 2px solid #e2e8f0;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      tr:hover {
+        background-color: #f8fafc;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Toast notification style */
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #10b981;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-content">
+        <a href="/" class="nav-brand">
+          <i class="fas fa-link"></i>
+          URL Shortener
+        </a>
+        <button class="nav-btn" onclick="toggleView()" id="toggleBtn">
+          <i class="fas fa-history"></i>
+          <span id="toggleBtnText">History</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div id="urlForm" class="form-container">
+        <form action="/url" method="post">
+          <div class="input-group">
+            <input
+              type="text"
+              name="url"
+              placeholder="Enter your long URL here..."
+              required
+            />
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-link"></i> Shorten URL
+            </button>
+          </div>
+        </form>
+
+        <% if (locals.id) { %>
+        <div class="generated-url">
+          <span class="url-text">http://localhost:8001/<%= id %></span>
+          <div class="action-btns">
+            <button
+              class="btn btn-primary"
+              onclick="copyToClipboard('http://localhost:8001/<%= id %>')"
+            >
+              <i class="fas fa-copy"></i> Copy
+            </button>
+            <a href="/<%= id %>" target="_blank" class="btn btn-secondary">
+              <i class="fas fa-external-link-alt"></i> Visit
+            </a>
+          </div>
+        </div>
+        <button class="btn btn-secondary" onclick="resetPage()">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+        <% } %>
+      </div>
+
+      <div id="urlTable" class="table-container hidden">
+        <% if (locals.urls) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Short URL</th>
+              <th>Original URL</th>
+              <th>Clicks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% urls.forEach((url, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td>
+                <span class="url-text">
+                  http://localhost:8001/<%= url.shortID %></span
+                >
+              </td>
+              <td>
+                <%= url.redirectUrl.substring(0, 50) %><%=
+                url.redirectUrl.length > 50 ? '...' : '' %>
+              </td>
+              <td><%= url.visitHistory.length %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <p style="text-align: center; padding: 2rem; color: #64748b">
+          No URLs have been shortened yet.
+        </p>
+        <% } %>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("URL copied to clipboard!");
+        });
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.style.display = "block";
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 3000);
+      }
+
+      function resetPage() {
+        window.location.href = "/";
+      }
+
+      function toggleView() {
+        const urlForm = document.getElementById("urlForm");
+        const urlTable = document.getElementById("urlTable");
+        const toggleBtn = document.getElementById("toggleBtn");
+        const toggleBtnText = document.getElementById("toggleBtnText");
+
+        urlForm.classList.toggle("hidden");
+        urlTable.classList.toggle("hidden");
+
+        if (urlForm.classList.contains("hidden")) {
+          toggleBtnText.textContent = "Generate URL";
+          toggleBtn.innerHTML = '<i class="fas fa-plus"></i> Generate URL';
+        } else {
+          toggleBtnText.textContent = "History";
+          toggleBtn.innerHTML = '<i class="fas fa-history"></i> History';
+        }
+      }
+    </script>
+  </body>
+</html>
